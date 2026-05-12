@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg height="128" viewBox="0 0 128 128" width="128"
+     xmlns="http://www.w3.org/2000/svg">
+  <defs>
+
+    <!-- Blue panel gradient: dark at top, lighter at bottom (matches Luminance) -->
+    <linearGradient id="panelGrad" gradientUnits="userSpaceOnUse"
+                    x1="64" y1="66" x2="64" y2="122">
+      <stop offset="0" stop-color="#1a5fb4"/>
+      <stop offset="1" stop-color="#3584e4"/>
+    </linearGradient>
+
+    <!-- Subtle shadow gradient at the slot opening (label-entry edge) -->
+    <linearGradient id="slotShadow" gradientUnits="userSpaceOnUse"
+                    x1="64" y1="54" x2="64" y2="64">
+      <stop offset="0" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.18"/>
+    </linearGradient>
+
+  </defs>
+
+  <!-- ── Label strip ────────────────────────────────────────────────────
+       White paper emerging from the printer slot.
+       Extends from near the top of the canvas down into the printer body.
+  ────────────────────────────────────────────────────────────────────── -->
+  <rect x="40" y="6" width="48" height="58" rx="3" fill="#ffffff"/>
+
+  <!-- Barcode bars on the label (dark, varying widths — Code 128 style) -->
+  <rect x="44"   y="16" width="2"   height="34" fill="#241f31"/>
+  <rect x="47.5" y="16" width="1"   height="34" fill="#241f31"/>
+  <rect x="50"   y="16" width="3"   height="34" fill="#241f31"/>
+  <rect x="55"   y="16" width="1"   height="34" fill="#241f31"/>
+  <rect x="57.5" y="16" width="2.5" height="34" fill="#241f31"/>
+  <rect x="62"   y="16" width="1.5" height="34" fill="#241f31"/>
+  <rect x="65"   y="16" width="3"   height="34" fill="#241f31"/>
+  <rect x="70"   y="16" width="1"   height="34" fill="#241f31"/>
+  <rect x="72.5" y="16" width="2"   height="34" fill="#241f31"/>
+  <rect x="76.5" y="16" width="3"   height="34" fill="#241f31"/>
+  <rect x="81"   y="16" width="1"   height="34" fill="#241f31"/>
+  <rect x="83.5" y="16" width="2"   height="34" fill="#241f31"/>
+
+  <!-- Shadow at the base of the label (where it enters the slot) -->
+  <rect x="40" y="54" width="48" height="10" rx="1" fill="url(#slotShadow)"/>
+
+  <!-- ── Printer outer casing ───────────────────────────────────────────
+       Grey physical shell, same #c0bfbc as Luminance's monitor bezel.
+       Starts at y=60, covering the bottom portion of the label strip
+       and creating the slot illusion.
+  ────────────────────────────────────────────────────────────────────── -->
+  <rect x="4" y="60" width="120" height="64" rx="14" fill="#c0bfbc"/>
+
+  <!-- Slot slit — dark narrow opening where the label exits the printer -->
+  <rect x="38" y="60" width="52" height="5" rx="2.5" fill="#5c5c5c"/>
+  <!-- Slot inner highlight (thin lighter line at the top of the slit) -->
+  <rect x="38" y="60" width="52" height="2" rx="1"   fill="#77767b"/>
+
+  <!-- ── Printer front panel (blue, inset inside the grey casing) ───────
+       Represents the active face of the printer.
+  ────────────────────────────────────────────────────────────────────── -->
+  <rect x="8" y="68" width="112" height="52" rx="9" fill="url(#panelGrad)"/>
+
+  <!-- ── White symbolic elements on the blue panel ─────────────────────
+       A small label/sticker shape with barcode lines — iconic shorthand
+       for "label printing".
+  ────────────────────────────────────────────────────────────────────── -->
+
+  <!-- Mini label card -->
+  <rect x="38" y="79" width="36" height="26" rx="3" fill="#ffffff" opacity="0.92"/>
+
+  <!-- Mini barcode bars on the card (blue, matching panel colour) -->
+  <rect x="42"   y="84" width="1.5" height="14" fill="#1a5fb4"/>
+  <rect x="45"   y="84" width="3"   height="14" fill="#1a5fb4"/>
+  <rect x="50"   y="84" width="1.5" height="14" fill="#1a5fb4"/>
+  <rect x="53.5" y="84" width="2"   height="14" fill="#1a5fb4"/>
+  <rect x="57.5" y="84" width="3"   height="14" fill="#1a5fb4"/>
+  <rect x="62.5" y="84" width="1.5" height="14" fill="#1a5fb4"/>
+  <rect x="65.5" y="84" width="2"   height="14" fill="#1a5fb4"/>
+  <rect x="69.5" y="84" width="1.5" height="14" fill="#1a5fb4"/>
+
+  <!-- Status LED — white circle, top-right of the blue panel -->
+  <circle cx="98" cy="76" r="4" fill="#ffffff" opacity="0.88"/>
+
+</svg>

@@ -1,3 +1,5 @@
+<img src="lably/data/icons/hicolor/scalable/apps/io.github.boosterl.lably.svg" width="128" height="128" alt="Lably icon"/>
+
 # Lably
 
 A desktop GUI application for printing labels on DYMO Bluetooth label printers.

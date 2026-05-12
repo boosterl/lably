@@ -12,7 +12,7 @@ import gi
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 
-from gi.repository import Adw, GdkPixbuf, Gio, GLib, GObject, Gtk  # noqa: E402
+from gi.repository import Adw, Gdk, GdkPixbuf, Gio, GLib, GObject, Gtk  # noqa: E402
 
 # Local
 from lably.core.meta import get_author_name, get_version, get_website
@@ -75,6 +75,13 @@ class GtkMainWindow(BaseMainWindow):
     # ------------------------------------------------------------------
 
     def _on_activate(self, app: Adw.Application) -> None:
+        # Register the bundled icon so the app icon and AboutDialog both
+        # resolve APP_ID to our custom SVG.
+        _icons_dir = Path(__file__).resolve().parent.parent.parent / "data" / "icons"
+        display = Gdk.Display.get_default()
+        if display is not None:
+            Gtk.IconTheme.get_for_display(display).add_search_path(str(_icons_dir))
+
         self._win = self._build_window(app)
         self._win.present()
 
@@ -384,7 +391,7 @@ class GtkMainWindow(BaseMainWindow):
         issue_url = website.rstrip("/") + "/issues" if website else ""
         about = Adw.AboutDialog(
             application_name="Lably",
-            application_icon="document-print",
+            application_icon=APP_ID,
             developer_name=author,
             version=get_version(),
             website=website,
