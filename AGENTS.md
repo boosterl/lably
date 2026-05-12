@@ -7,8 +7,8 @@ Guidelines for agentic coding agents working in this repository.
 ## Project Overview
 
 **lably** is a Python 3 desktop GUI application for printing labels on DYMO Bluetooth label printers.
-It supports two GUI backends — Tkinter (default) and GTK 4 + Libadwaita — selected at runtime via an
-environment variable.
+It supports two GUI backends — GTK 4 + Libadwaita (preferred) and Tkinter (fallback) — selected
+automatically at runtime based on whether PyGObject is available.
 
 - **Entry point:** `lably/__main__.py` → calls `create_main_window().show()`
 - **CLI entry point:** `lably` (installed via `pyproject.toml` scripts)
@@ -48,9 +48,8 @@ python setup.py py2app
 ## Run Commands
 
 ```bash
-lably                          # Tkinter UI (default)
-LABLY_PLATFORM=gtk4 lably      # GTK 4 + Libadwaita UI
-python -m lably                # run directly as a module
+lably           # GTK 4 + Libadwaita UI if PyGObject is available, else Tkinter
+python -m lably # run directly as a module
 ```
 
 ---
@@ -101,6 +100,7 @@ pytest -x lably/tests/                       # stop on first failure
 lably/
 ├── __main__.py               # Entry point
 ├── core/
+│   ├── meta.py               # Package metadata helpers (version, author, website)
 │   └── printer.py            # Bluetooth printer logic (async/await + asyncio.run())
 ├── ui/
 │   ├── __init__.py           # Factory: create_main_window() -> BaseMainWindow
@@ -114,7 +114,7 @@ lably/
 
 **Key patterns:**
 - `BaseMainWindow` (ABC) defines the UI contract; platform implementations subclass it.
-- `create_main_window()` reads `LABLY_PLATFORM` (default: `tk`) and returns the matching window.
+- `create_main_window()` tries to import `GtkMainWindow`; falls back to `TKMainWindow` on `ImportError`.
 - Bluetooth printer calls are async; the Tkinter backend uses `asyncio.run()` while the GTK4 backend
   dispatches to a daemon thread and uses `GLib.idle_add()` to report results back on the main loop.
 
@@ -215,14 +215,13 @@ except Exception as e:
 
 - `lably/platforms/tk/__init.py__` has a **malformed filename** (underscores misplaced). It should be renamed to `__init__.py`. This currently prevents the `tk` platform from being properly recognized as a package.
 - No `__init__.py` files exist in `lably/core/` or `lably/platforms/` — add them if treating these as explicit packages.
-- `print_barcode()` in `TKMainWindow` has no error handling; it should mirror the pattern in `print_file()`.
 
 ---
 
 ## Dependencies
 
 Runtime (declared in `pyproject.toml`):
-- `dymo-bluetooth>=0.1.2` — Bluetooth printer discovery and communication
+- `dymo-bluetooth>=0.1.3` — Bluetooth printer discovery and communication
 - `python-barcode>=0.16.1` — Code 128 barcode generation
 
 Optional (declared in `pyproject.toml` under `[project.optional-dependencies]`):
