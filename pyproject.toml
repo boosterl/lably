@@ -10,9 +10,8 @@ version = "0.0.1"
 description = "A GUI to print labels on a Label printer"
 readme = "README.md"
 authors = [{ name = "Bram Oosterlynck", email = "bram.oosterlynck@gmail.com" }]
-license = { file = "LICENSE" }
+license = "GPL-3.0-only"
 classifiers = [
-  "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
   "Intended Audience :: Developers",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.8",
@@ -38,3 +37,6 @@ Homepage = "https://github.com/boosterl/lably"
 
 [project.scripts]
 lably = "lably.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["lably*"]
