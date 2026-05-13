@@ -211,6 +211,52 @@ except Exception as e:
 
 ---
 
+## Translations (i18n)
+
+Lably uses standard Python `gettext` for internationalisation, compatible with both Flatpak
+(`/app/share/locale`) and system installs.
+
+### Key files
+
+| Path | Purpose |
+|---|---|
+| `lably/core/i18n.py` | `setup_i18n()` — configures text domain and locale search paths |
+| `po/POTFILES.in` | Source files that `xgettext` should scan for translatable strings |
+| `po/LINGUAS` | One language code per line for each available translation |
+| `po/lably.pot` | Canonical POT template (regenerate with `xgettext`, see below) |
+| `lably/locale/<lang>/LC_MESSAGES/lably.mo` | Compiled binary catalogs (must be built before install) |
+
+### Adding a new language
+
+1. Add the language code (e.g. `de`) to `po/LINGUAS`.
+2. Create the PO file by copying the template:
+   ```bash
+   msginit --input=po/lably.pot --locale=de --output=po/de.po
+   ```
+3. Translate all `msgstr ""` entries in `po/de.po`.
+4. Compile to a binary `.mo` file:
+   ```bash
+   mkdir -p lably/locale/de/LC_MESSAGES
+   msgfmt po/de.po -o lably/locale/de/LC_MESSAGES/lably.mo
+   ```
+
+### Regenerating the POT template after adding new strings
+
+```bash
+xgettext --output=po/lably.pot --language=Python --keyword=_ \
+    --from-code=UTF-8 --join-existing \
+    $(cat po/POTFILES.in)
+```
+
+### Rules for translatable strings
+
+- Wrap every user-visible string with `_("…")`.
+- Use `_("Hello, {name}").format(name=x)` for interpolated strings (never f-strings inside `_()`).
+- Import `gettext` at the top of each UI module and assign `_ = gettext.gettext` **after**
+  `setup_i18n()` has been called (it is called early in `lably/__main__.py`).
+
+---
+
 ## Known Issues
 
 - `lably/platforms/tk/__init.py__` has a **malformed filename** (underscores misplaced). It should be renamed to `__init__.py`. This currently prevents the `tk` platform from being properly recognized as a package.

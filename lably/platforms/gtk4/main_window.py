@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 # Standard library
+import gettext
 import sys
 import threading
 from pathlib import Path
 from typing import Optional
+
+_ = gettext.gettext
 
 # Third-party
 import gi
@@ -43,31 +46,31 @@ class GtkMainWindow(BaseMainWindow):
     def print_file(self) -> None:
         raw = self._selected_file_path
         if not raw:
-            self._show_toast("No file selected.", error=True)
+            self._show_toast(_("No file selected."), error=True)
             return
 
         file_path = Path(raw)
         reverse = self._file_reverse_row.get_active()
         self._run_in_thread(
             lambda: print_image(file_path, reverse),
-            success_msg=f"Printed {file_path.name}",
+            success_msg=_("Printed {name}").format(name=file_path.name),
         )
 
     def print_barcode(self) -> None:
         buf = self._barcode_text_view.get_buffer()
         text = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), False).strip()
         if not text:
-            self._show_toast("Enter some text first.", error=True)
+            self._show_toast(_("Enter some text first."), error=True)
             return
 
         reverse = self._barcode_reverse_row.get_active()
         self._run_in_thread(
             lambda: print_barcode(text, reverse),
-            success_msg="Barcode sent to printer.",
+            success_msg=_("Barcode sent to printer."),
         )
 
     def browse_file(self) -> None:
-        dialog = Gtk.FileDialog(title="Select a label image")
+        dialog = Gtk.FileDialog(title=_("Select a label image"))
         dialog.open(self._win, None, self._on_file_chosen)
 
     # ------------------------------------------------------------------
@@ -99,7 +102,7 @@ class GtkMainWindow(BaseMainWindow):
 
         # Print button — outermost left of the header bar
         self._print_btn = Gtk.Button()
-        self._print_btn.set_tooltip_text("Print")
+        self._print_btn.set_tooltip_text(_("Print"))
         self._print_btn.add_css_class("suggested-action")
         self._print_btn.set_sensitive(False)
         self._print_btn.connect("clicked", lambda _: self._on_print_clicked())
@@ -107,7 +110,7 @@ class GtkMainWindow(BaseMainWindow):
         # Icon + label side by side inside the button (normal state)
         self._print_btn_content = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
         self._print_btn_content.append(Gtk.Image.new_from_icon_name("printer-symbolic"))
-        self._print_btn_content.append(Gtk.Label(label="Print"))
+        self._print_btn_content.append(Gtk.Label(label=_("Print")))
         self._print_btn.set_child(self._print_btn_content)
 
         # Spinner shown while printing
@@ -118,7 +121,7 @@ class GtkMainWindow(BaseMainWindow):
         # "Open file" button in the header start — only visible on file tab
         self._open_btn = Gtk.Button()
         self._open_btn.set_icon_name("folder-open-symbolic")
-        self._open_btn.set_tooltip_text("Open label image…")
+        self._open_btn.set_tooltip_text(_("Open label image…"))
         self._open_btn.add_css_class("flat")
         self._open_btn.connect("clicked", lambda _: self.browse_file())
         header.pack_start(self._open_btn)
@@ -135,7 +138,7 @@ class GtkMainWindow(BaseMainWindow):
         # Hamburger menu button in the header end
         menu_btn = Gtk.MenuButton()
         menu_btn.set_icon_name("open-menu-symbolic")
-        menu_btn.set_tooltip_text("Main menu")
+        menu_btn.set_tooltip_text(_("Main menu"))
         menu_btn.add_css_class("flat")
         menu_btn.set_menu_model(self._build_app_menu())
         header.pack_end(menu_btn)
@@ -153,13 +156,13 @@ class GtkMainWindow(BaseMainWindow):
         stack.add_titled_with_icon(
             self._build_file_page(),
             "file",
-            "File",
+            _("File"),
             "document-open-symbolic",
         )
         stack.add_titled_with_icon(
             self._build_barcode_page(),
             "barcode",
-            "Barcode",
+            _("Barcode"),
             "view-list-symbolic",
         )
 
@@ -258,12 +261,12 @@ class GtkMainWindow(BaseMainWindow):
 
         # --- Options group -------------------------------------------
         options_group = Adw.PreferencesGroup()
-        options_group.set_title("Options")
+        options_group.set_title(_("Options"))
         box.append(options_group)
 
         self._file_reverse_row = Adw.SwitchRow()
-        self._file_reverse_row.set_title("Reverse")
-        self._file_reverse_row.set_subtitle("Mirror the image before printing.")
+        self._file_reverse_row.set_title(_("Reverse"))
+        self._file_reverse_row.set_subtitle(_("Mirror the image before printing."))
         options_group.add(self._file_reverse_row)
 
         return clamp
@@ -282,12 +285,12 @@ class GtkMainWindow(BaseMainWindow):
 
         # --- Text entry group ----------------------------------------
         text_group = Adw.PreferencesGroup()
-        text_group.set_title("Barcode Text")
-        text_group.set_description("Enter the text to encode as a Code 128 barcode.")
+        text_group.set_title(_("Barcode Text"))
+        text_group.set_description(_("Enter the text to encode as a Code 128 barcode."))
         box.append(text_group)
 
         text_row = Adw.ActionRow()
-        text_row.set_title("Text")
+        text_row.set_title(_("Text"))
         text_row.set_activatable(False)
         text_group.add(text_row)
 
@@ -312,12 +315,12 @@ class GtkMainWindow(BaseMainWindow):
 
         # --- Options group -------------------------------------------
         options_group = Adw.PreferencesGroup()
-        options_group.set_title("Options")
+        options_group.set_title(_("Options"))
         box.append(options_group)
 
         self._barcode_reverse_row = Adw.SwitchRow()
-        self._barcode_reverse_row.set_title("Reverse")
-        self._barcode_reverse_row.set_subtitle("Mirror the barcode before printing.")
+        self._barcode_reverse_row.set_title(_("Reverse"))
+        self._barcode_reverse_row.set_subtitle(_("Mirror the barcode before printing."))
         options_group.add(self._barcode_reverse_row)
 
         return clamp
@@ -328,7 +331,7 @@ class GtkMainWindow(BaseMainWindow):
 
     def _build_app_menu(self) -> Gio.Menu:
         menu = Gio.Menu()
-        menu.append("About Lably", "app.about")
+        menu.append(_("About Lably"), "app.about")
         return menu
 
     # ------------------------------------------------------------------
@@ -457,13 +460,13 @@ class GtkMainWindow(BaseMainWindow):
                 GLib.idle_add(self._show_toast, success_msg, False)
             except PrinterException as exc:
                 GLib.idle_add(self._set_print_btn_loading, False)
-                GLib.idle_add(self._show_toast, f"Printer error: {exc}", True)
+                GLib.idle_add(self._show_toast, _("Printer error: {error}").format(error=exc), True)
             except ValueError as exc:
                 GLib.idle_add(self._set_print_btn_loading, False)
-                GLib.idle_add(self._show_toast, f"Invalid value: {exc}", True)
+                GLib.idle_add(self._show_toast, _("Invalid value: {error}").format(error=exc), True)
             except Exception as exc:  # noqa: BLE001
                 GLib.idle_add(self._set_print_btn_loading, False)
-                GLib.idle_add(self._show_toast, f"Unexpected error: {exc}", True)
+                GLib.idle_add(self._show_toast, _("Unexpected error: {error}").format(error=exc), True)
 
         threading.Thread(target=_worker, daemon=True).start()
 
@@ -471,6 +474,6 @@ class GtkMainWindow(BaseMainWindow):
         toast = Adw.Toast(title=message)
         toast.set_timeout(3)
         if error:
-            toast.set_button_label("Dismiss")
+            toast.set_button_label(_("Dismiss"))
             toast.connect("button-clicked", lambda t: None)
         self._toast_overlay.add_toast(toast)

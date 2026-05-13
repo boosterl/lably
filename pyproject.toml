@@ -40,3 +40,9 @@ lably = "lably.__main__:main"
 
 [tool.setuptools.packages.find]
 include = ["lably*"]
+
+[tool.setuptools.package-data]
+lably = [
+  "locale/*/LC_MESSAGES/*.mo",
+  "data/icons/hicolor/scalable/apps/*.svg",
+]
